@@ -5,7 +5,7 @@ import threading
 import sys
 import termios
 import tty
-from datetime import timedelta, datetime
+from datetime import datetime
 
 SAVE_FILE = "activity_progress.json"
 
@@ -50,7 +50,6 @@ class Timer:
         total_seconds = total_seconds % 60
         return f"{total_hours}h {total_minutes}m {total_seconds}s"
 
-
     def save_progress(self):
         data = load_progress()
         data[self.label] = {
@@ -87,8 +86,14 @@ def display_menu(progress_data):
         else:
             remaining_seconds = info  # Old format
             start_time = "Unknown"
-        hours_remaining = str(timedelta(seconds=remaining_seconds))
-        print(f"   {idx}. {label}: {hours_remaining} remaining (Started on: {start_time})")
+        total_seconds = int(remaining_seconds)
+        if total_seconds < 0:
+            total_seconds = 0
+        total_hours = total_seconds // 3600
+        total_minutes = (total_seconds % 3600) // 60
+        total_seconds = total_seconds % 60
+        time_display = f"{total_hours}h {total_minutes}m {total_seconds}s"
+        print(f"   {idx}. {label}: {time_display} remaining (Started on: {start_time})")
         idx +=1
     print("4. Exit")
     print("---------------------------")
